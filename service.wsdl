@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://localhost:8000/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://localhost:8000/">
+<wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Performs simple math over the Web</wsdl:documentation>
+<wsdl:types>
+<s:schema elementFormDefault="qualified" targetNamespace="http://localhost:8000/">
+
+
+<!-- 
+    Ici nous definissons un element XML que nous allons appeler Add. Concretement ca sera un type complexe qui contientra deux autres element que nous allons appeler a et b et qui seront de type int. Ca seront nos données d'entrée lors d'une requette.Ceci indique que lors que nous allons effectuer une requette pour trouver la somme de deux numeros, nous allons devoir preciser deux element appeler a et b et nous allons devoir preciser que ce sont de type int.
+-->
+<s:element name="Add">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="a" type="s:int"/>
+<s:element minOccurs="1" maxOccurs="1" name="b" type="s:int"/>
+</s:sequence>
+</s:complexType>
+</s:element>
+<!-- 
+    Ici nous allons notre reponse. Ici nous precisons que notre reponse va s'appeler add response et que que elle serq de type int et que elle aura une seul occurence quoi que il en soit (c'est pour cela que nous voyons le maxOccurs et le minOccurs)
+-->
+
+<s:element name="AddResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="AddResult" type="s:int"/>
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="Subtract">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="a" type="s:int"/>
+<s:element minOccurs="1" maxOccurs="1" name="b" type="s:int"/>
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="SubtractResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="SubtractResult" type="s:int"/>
+</s:sequence>
+</s:complexType>
+</s:element>
+</s:schema>
+</wsdl:types>
+
+
+<!--
+    Comme nous venons de le voir, nos operations vont nous lié  a un message en particulier. Ici, nous allons trouver tous les  messages qui ont etait decrit par les operations. Ces messages vont nous diriger vers un element XML concret et cette element fera reelement partie de nos données echangé lors d'une requette. On a des données d'entree (tns:Add) ainsi que des données de sortie (tns:AddResponse).
+-->
+<wsdl:message name="AddSoapIn">
+<wsdl:part name="parameters" element="tns:Add"/>
+</wsdl:message>
+<wsdl:message name="AddSoapOut">
+<wsdl:part name="parameters" element="tns:AddResponse"/>
+</wsdl:message>
+<wsdl:message name="SubtractSoapIn">
+<wsdl:part name="parameters" element="tns:Subtract"/>
+</wsdl:message>
+<wsdl:message name="SubtractSoapOut">
+<wsdl:part name="parameters" element="tns:SubtractResponse"/>
+</wsdl:message>
+
+<!--
+    Mon portType ici va definir un ensemble d'operations differentes que peuvent prendre mon WSDL. Mon portType va definir les operations de maniere abstraite. Nous allons definir ce que les operations von recevoir et renvoyer sans preciser concretement comment les operations seront implementer
+-->
+<wsdl:portType name="Calculator_x0020_Web_x0020_ServiceSoap">
+<!--
+Ceci decrit tous mes operations a effectuer. C'est une sorte de contrat qui va pointer vers des messages differents lors que une operation va s'effectuer. Par exemple, lors que l'operation "AddOperation va se declencher, nous allons pointer vers deux messages differents, et ces messages contiendront plus d'informations concernant les details concernant ce que l'operation va recevoir et ce que l'operation va renvoyer". En plus nous aurons des données d'entrée (input) ce que nous allons envoyer ainsi que des données de sortie (ouput) qui correspond a ce que nous allons renvoyer
+-->
+
+ 
+<wsdl:operation name="Add">
+
+ <wsdl:input message="tns:AddSoapIn"/>
+<wsdl:output message="tns:AddSoapOut"/>
+</wsdl:operation>
+<wsdl:operation name="Subtract">
+
+<wsdl:input message="tns:SubtractSoapIn"/>
+<wsdl:output message="tns:SubtractSoapOut"/>
+</wsdl:operation>
+</wsdl:portType>
+
+
+<wsdl:binding name="Calculator_x0020_Web_x0020_ServiceSoap" type="tns:Calculator_x0020_Web_x0020_ServiceSoap">
+<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+<wsdl:operation name="Add">
+<soap:operation soapAction="" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="Subtract">
+<soap:operation soapAction="" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+</wsdl:binding>
+
+<!-- 
+Ceci est mon "binding principale. Il va definir le protocole de transport utilisé pour nos operations dans notre WSDL (Dans ce cas http, ca veux dire que nous allons communiquer en http) Il va aussi definir les operations que nous allons effectuer dans ce cas nos operations seront Add (pour ajouter) et subtract (pour soustraire) Dans ces deux operations, nous allons aussi definir le type de données que le coprs de nos requettes vont utiliser. Dans ce cas, le mot clé literal nous indique que nous allons traiter du  XML.
+-->
+<wsdl:binding name="Calculator_x0020_Web_x0020_ServiceSoap12" type="tns:Calculator_x0020_Web_x0020_ServiceSoap">
+<soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+<wsdl:operation name="Add">
+<soap12:operation soapAction="" style="document"/>
+<wsdl:input>
+<soap12:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap12:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="Subtract">
+<soap12:operation soapAction="" style="document"/>
+<wsdl:input>
+<soap12:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap12:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+</wsdl:binding>
+<!-- 
+    Ici le service va definir des ports different et preciser leur adresses web (en l'occurence en local sur le port 8000) le service va aussi s'accrocher a un binding et le binding va se charger d'effectuer notre operation (dans ce cas avec le protocole http)
+-->
+<wsdl:service name="Calculator_x0020_Web_x0020_Service">
+<wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Performs simple math over the Web</wsdl:documentation>
+
+<wsdl:port name="Calculator_x0020_Web_x0020_ServiceSoap" binding="tns:Calculator_x0020_Web_x0020_ServiceSoap">
+<soap:address location="http://localhost:8000/calculatorService.php"/>
+</wsdl:port>
+<wsdl:port name="Calculator_x0020_Web_x0020_ServiceSoap12" binding="tns:Calculator_x0020_Web_x0020_ServiceSoap12">
+<soap12:address location="http://localhost:8000/calculatorService.php"/>
+</wsdl:port>
+</wsdl:service>
+</wsdl:definitions>
